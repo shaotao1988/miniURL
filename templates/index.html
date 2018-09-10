@@ -2,5 +2,9 @@
 {% block title%} MiniURL {% endblock %}
 
 {% block content %}
-Hello, world!
+<form method="post" action="/shortenURL">
+    longURL:<br>
+    <input type="text" name="longURL"/></br></br>
+    <input type="submit" value="Submit"/>
+</form>
 {% endblock %}
