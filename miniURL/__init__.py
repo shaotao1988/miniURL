@@ -33,4 +33,8 @@ def create_app(test_config = None):
     from . import auth
     app.register_blueprint(auth.bp_auth)
 
+    from . import miniURL
+    app.register_blueprint(miniURL.bp_miniURL)
+    app.add_url_rule('/', endpoint = 'index')
+
     return app

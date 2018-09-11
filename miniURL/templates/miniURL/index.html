@@ -2,9 +2,16 @@
 {% block title%} MiniURL {% endblock %}
 
 {% block content %}
-<form method="post" action="/shortenURL">
-    longURL:<br>
-    <input type="text" name="longURL"/></br></br>
-    <input type="submit" value="Submit"/>
+<form method="post">
+    <div class="form-group">
+    <input name="long_URL" class="form-control  mr-2" placeholder="URL" required>
+    <input class="btn btn-primary mt-2" type="submit" value="Generate Short URL">
+    </div>
 </form>
+  {% if short_URL %}
+  <div class="form-group">
+  <label for="short_URL" class="mr-2">Short URL:</label>
+  <input name="short_URL" class="form-control" value="{{ short_URL }}">
+  </div>
+  {% endif %}
 {% endblock %}

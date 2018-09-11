@@ -57,8 +57,7 @@ def login():
         if error_msg is None:
             session.clear()
             session['user_id'] = user['id']
-            #return redirect(url_for('index'))
-            return render_template('auth/register.html')
+            return redirect(url_for('index'))
         
         flash(error_msg)
     

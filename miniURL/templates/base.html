@@ -12,7 +12,7 @@
 <body>
     <!--NAVBAR START-->
     <nav class="navbar navbar-expand-sm navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('auth.login') }}">
+        <a class="navbar-brand" href="{{ url_for('index') }}">
             <img src="{{ url_for('static', filename='img/logo.jpg') }}" width="30" height="30" class="d-inline-block align-top" alt="">
             MiniURL
         </a>
@@ -35,7 +35,7 @@
             <div class="col-sm-4">
                 <ul class="nav flex-column">
                     {% if g.user %}
-                        <li class="nav-item"><span>{{ g.user['username'] }}</span></li>
+                        <li class="nav-item">Welcome, {{ g.user['username'] }}!</li>
                         <li><a class="nav-link" href="{{ url_for('auth.logout') }}">Log out</a></li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Register</a></li>
