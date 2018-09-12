@@ -4,6 +4,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from miniURL.db import get_db
+from miniURL.util import shorten_URL, unshorten_URL
 
 bp_miniURL = Blueprint('miniURL', __name__)
 
@@ -12,6 +13,7 @@ def index():
     if request.method == 'POST':
         long_URL = request.form['long_URL']
         err_msg = None
+        shortURL = None
         if not long_URL or long_URL == "":
             err_msg = "Please input URL."
         else:
@@ -19,11 +21,15 @@ def index():
             url = db.execute("SELECT * FROM url WHERE long_URL = ?", (long_URL,)
                         ).fetchone()
             if url:
-                print("URL {} already in database.".format(long_URL))
+                # print("URL {} already in database.".format(long_URL))
+                shortURL = shorten_URL(url['id'])
             else:
                 db.execute("INSERT INTO url (long_URL, owner_id) values (?, ?)", (long_URL, 1))
                 db.commit()
-            return render_template('index.html', short_URL=long_URL)
+                url = db.execute("SELECT * FROM url WHERE long_URL = ?", (long_URL,)
+                        ).fetchone()
+                shortURL = shorten_URL(['id'])
+            return render_template('index.html', short_URL=shortURL)
         
         flash(err_msg, 'error')
     
