@@ -51,9 +51,9 @@ def login():
     error_msg = None
 
     if not username:
-        error_msg = 'Username is required'
+        error_msg = 'Username is required.'
     elif not password:
-        error_msg = 'Password is required'
+        error_msg = 'Password is required.'
     else:
         user = db.execute('SELECT * FROM user WHERE username = ?', (username,)
                     ).fetchone()
@@ -94,6 +94,7 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login'))
+            flash('Login is required to continue.', 'error')
+            return redirect(url_for('index'))
         return view(**kwargs)
     return wrapped_view

@@ -10,7 +10,7 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 
-<body>
+<body class="bg-light">
     <!--NAVBAR START-->
     <nav class="navbar navbar-expand-sm navbar-dark" style="background-color: #563d7c;">
         <a class="navbar-brand" href="{{ url_for('index') }}">
@@ -31,7 +31,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown1" role="button" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">Login</a>
-                <div class="dropdown-menu dropdown-menu-right" id="loginMenu" style="min-width:400px">
+                <div class="dropdown-menu dropdown-menu-right mt-2" id="loginMenu" style="min-width:400px">
                     <form class="px-2 py-2" method="post" id="LoginForm" action="{{ url_for('auth.login') }}">
                         <div class="form-group">
                             <label for="username">Username</label>
@@ -48,7 +48,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown2" role="button" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">Register</a>
-                <div class="dropdown-menu dropdown-menu-right" id="RegisterMenu" style="min-width:400px">
+                <div class="dropdown-menu dropdown-menu-right mt-2" id="RegisterMenu" style="min-width:400px">
                     <form class="px-2 py-2" method="post" id="RegisterForm" action="{{ url_for('auth.register') }}">
                         <div class="form-group">
                             <label for="username">Username</label>

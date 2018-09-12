@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from miniURL.db import get_db
 from miniURL.util import shorten_URL, unshorten_URL
+from miniURL.auth import login_required
 
 bp_miniURL = Blueprint('miniURL', __name__)
 
@@ -21,7 +22,6 @@ def index():
             url = db.execute("SELECT * FROM url WHERE long_URL = ?", (long_URL,)
                         ).fetchone()
             if url:
-                # print("URL {} already in database.".format(long_URL))
                 shortURL = shorten_URL(url['id'])
             else:
                 db.execute("INSERT INTO url (long_URL, owner_id) values (?, ?)", (long_URL, 1))
@@ -36,5 +36,6 @@ def index():
     return render_template('index.html', short_URL=None)
 
 @bp_miniURL.route('/dashboard')
+@login_required
 def dashboard():
     return render_template('index.html')

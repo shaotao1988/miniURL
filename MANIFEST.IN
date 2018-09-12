@@ -1,0 +1,4 @@
+include miniURL/schema.sql
+graft miniURL/static
+graft miniURL/templates
+global-exclude *.pyc
