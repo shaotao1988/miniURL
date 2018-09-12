@@ -9,64 +9,71 @@ from miniURL.db import get_db
 
 bp_auth = Blueprint('auth', __name__, url_prefix='/auth')
 
-@bp_auth.route('/register', methods = ['GET', 'POST'])
+@bp_auth.route('/register', methods = ['POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        error_msg = None
+    username = request.form['username']
+    password = request.form['password']
+    re_password = request.form['re_password']
+    db = get_db()
+    error_msg = None
 
-        if not username:
-            error_msg = 'Username is required'
-        elif not password:
-            error_msg = 'Password is required'
-        elif db.execute(
-            'SELECT id FROM user where username = ?', (username,)
-        ).fetchone() is not None:
-            error_msg = 'Username {} has alread been registered.'.format(username)
-        
-        if error_msg is None:
-            db.execute('INSERT INTO user (username, password) VALUES (?, ?)',
-                        (username, generate_password_hash(password)))
-            db.commit()
-            return redirect(url_for('auth.login'))
-
-        flash(error_msg)
-
-    return render_template('auth/register.html')
-
-@bp_auth.route('/login', methods = ['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        error_msg = None
-
-        if not username:
-            error_msg = 'Username is required'
-        elif not password:
-            error_msg = 'Password is required'
-        else:
-            user = db.execute('SELECT * FROM user WHERE username = ?', (username,)
-                        ).fetchone()
-            if user is None or not check_password_hash(user['password'], password):
-                error_msg = 'Incorrect username or password.'
-        
-        if error_msg is None:
-            session.clear()
-            session['user_id'] = user['id']
-            return redirect(url_for('index'))
-        
-        flash(error_msg)
+    if not username:
+        error_msg = 'Username is required.'
+    elif not password or not re_password:
+        error_msg = 'Password is required.'
+    elif password != re_password:
+        error_msg = 'Password is not the same.'
+    elif db.execute(
+        'SELECT id FROM user where username = ?', (username,)
+    ).fetchone() is not None:
+        error_msg = 'Username {} has alread been registered.'.format(username)
     
-    return render_template('auth/login.html')
+    if error_msg is None:
+        db.execute('INSERT INTO user (username, password) VALUES (?, ?)',
+                    (username, generate_password_hash(password)))
+        db.commit()
+        user = db.execute('SELECT * FROM user WHERE username = ?', (username,)
+                    ).fetchone()
+        session.clear()
+        session['user_id'] = user['id']
+        flash('Register success!', category='info')
+        return redirect(url_for('index'))
+
+    flash(error_msg, category='error')
+
+    return render_template('index.html')
+
+@bp_auth.route('/login', methods = ['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+    db = get_db()
+    error_msg = None
+
+    if not username:
+        error_msg = 'Username is required'
+    elif not password:
+        error_msg = 'Password is required'
+    else:
+        user = db.execute('SELECT * FROM user WHERE username = ?', (username,)
+                    ).fetchone()
+        if user is None or not check_password_hash(user['password'], password):
+            error_msg = 'Incorrect username or password.'
+    
+    if error_msg is None:
+        session.clear()
+        session['user_id'] = user['id']
+        flash('Login success!', category='info')
+        return redirect(url_for('index'))
+    
+    flash(error_msg, category='error')
+    
+    return render_template('index.html')
 
 @bp_auth.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('index'))
 
 @bp_auth.before_app_request
 def load_user_info():

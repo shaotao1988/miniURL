@@ -23,8 +23,12 @@ def index():
             else:
                 db.execute("INSERT INTO url (long_URL, owner_id) values (?, ?)", (long_URL, 1))
                 db.commit()
-            return render_template('miniURL/index.html', short_URL=long_URL)
+            return render_template('index.html', short_URL=long_URL)
         
-        flash(err_msg)
+        flash(err_msg, 'error')
     
-    return render_template('miniURL/index.html', short_URL=None)
+    return render_template('index.html', short_URL=None)
+
+@bp_miniURL.route('/dashboard')
+def dashboard():
+    return render_template('index.html')

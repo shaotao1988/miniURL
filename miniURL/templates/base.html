@@ -11,42 +11,95 @@
 
 <body>
     <!--NAVBAR START-->
-    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <nav class="navbar navbar-expand-sm navbar-dark" style="background-color: #563d7c;">
         <a class="navbar-brand" href="{{ url_for('index') }}">
-            <img src="{{ url_for('static', filename='img/logo.jpg') }}" width="30" height="30" class="d-inline-block align-top" alt="">
-            MiniURL
+            <img src="{{ url_for('static', filename='img/logo.jpg') }}" width="30" height="30" class="d-inline-block align-top" alt="">        MiniURL
         </a>
-        
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
-                </li>
-            </ul>
-        
+    
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+            </li>
+        </ul>
+    
+        <ul class="navbar-nav">
+            {%  if not g.user %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown1" role="button" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">Login</a>
+                <div class="dropdown-menu dropdown-menu-right" id="loginMenu" style="min-width:400px">
+                    <form class="px-2 py-2" method="post" id="LoginForm" action="{{ url_for('auth.login') }}">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input name="username" class="form-control" placeholder="Username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="Password" required>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Log In">
+                    </form>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropDown2" role="button" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">Register</a>
+                <div class="dropdown-menu dropdown-menu-right" id="RegisterMenu" style="min-width:400px">
+                    <form class="px-2 py-2" method="post" id="RegisterForm" action="{{ url_for('auth.register') }}">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input name="username" class="form-control" placeholder="Username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="Password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="re_password">Repeat Password</label>
+                            <input type="password" class="form-control" name="re_password" placeholder="Repeat Password" required>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Register">
+                    </form>
+                </div>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <div class="mt-2 mx-2 text-light">
+                Welcome, {{ g.user.username }} !
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link mx-2" href="{{ url_for('miniURL.dashboard') }}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link mx-2" href="{{ url_for('auth.logout') }}">Log out</a>
+            </li>
+            {% endif %}
+        </ul>
+    
     </nav>
     <!--NAVBAR END-->
 
     <!--CONTAINER START-->
     <div class="container mt-5">
         <div class="row">
-            <div class="col-sm-4">
-                <ul class="nav flex-column">
-                    {% if g.user %}
-                        <li class="nav-item">Welcome, {{ g.user['username'] }}!</li>
-                        <li><a class="nav-link" href="{{ url_for('auth.logout') }}">Log out</a></li>
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
-                    {% endif %}
-                </ul>
-            </div>
             <div class="col-sm-8">
-                {% for message in get_flashed_messages() %}
-                    <div class="alert alert-primary" role="alert">{{ message }}</div>
-                {% endfor %}
+                <div class="flashMessage">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                          {% if category in ['error', 'alert'] %}
+                            <div class="alert alert-danger" role="alert">{{ message }}</div>
+                          {% else %}
+                            <div class="alert alert-success" role="alert">{{ message }}</div>
+                          {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                </div>
                 <!--CONTENT START-->
                 {% block content %} {% endblock %}
                 <!--CONTENT END-->
@@ -55,7 +108,18 @@
     </div>
     <!--CONTAINER END-->
 
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $("#navbarDropDown1").click(function () {
+                $('#LoginForm')[0].reset();
+            });
+            $("#navbarDropDown2").click(function () {
+                $('#RegisterForm')[0].reset();
+            });
+        });
+    </script>
 
 </body>
 
